@@ -1,0 +1,451 @@
+                  value={pluginForm.url}
+                  onChange={(e) => setPluginForm({ ...pluginForm, url: e.target.value })}
+                  placeholder="输入插件 URL / 下载链接"
+                  className="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 block mb-1">
+                  联系方式 <span className="text-zinc-400 font-normal">(DC链接/QQ群等，选填)</span>
+                </label>
+                <input
+                  type="text"
+                  value={pluginForm.contact}
+                  onChange={(e) => setPluginForm({ ...pluginForm, contact: e.target.value })}
+                  placeholder="例如: Discord链接 / QQ群"
+                  className="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 block mb-1">
+                  描述 <span className="text-zinc-400 font-normal">(选填)</span>
+                </label>
+                <textarea
+                  rows={3}
+                  value={pluginForm.description}
+                  onChange={(e) => setPluginForm({ ...pluginForm, description: e.target.value })}
+                  placeholder="填写插件功能或用途说明..."
+                  className="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none resize-none"
+                />
+              </div>
+            </div>
+
+            <div className="pt-2 flex justify-end gap-2 border-t border-zinc-100 dark:border-zinc-800">
+              <button
+                onClick={() => setShowAddPluginModal(false)}
+                className="px-4 py-2 text-xs font-medium rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              >
+                取消
+              </button>
+              <button
+                onClick={handleAddPluginSubmit}
+                className="px-4 py-2 text-xs font-bold rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200"
+              >
+                确定
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== ST PLUGINS: SINGLE-PAGE DETAIL / EDIT MODAL ==================== */}
+      {editingPlugin && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-in fade-in pt-[calc(1rem+env(safe-area-inset-top,0px))] pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
+          <div className="w-full max-w-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl flex flex-col max-h-[88vh] overflow-hidden">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between flex-shrink-0 bg-zinc-50/50 dark:bg-zinc-900/50">
+              <div className="flex items-center gap-2">
+                {editingPlugin.type === 'script' ? (
+                  <span className="px-2 py-0.5 rounded text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300">
+                    脚本详情
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 rounded text-xs font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-300">
+                    插件详情
+                  </span>
+                )}
+                <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate max-w-[240px]">
+                  {editingPlugin.name}
+                </h3>
+              </div>
+              <button
+                onClick={() => setEditingPlugin(null)}
+                className="p-1 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body: 插件保持原单页；脚本独立使用横向 Tab */}
+            {editingPlugin.type === 'script' ? (
+              <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+                {/* Script Tabs */}
+                <div className="px-6 pt-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-1 flex-shrink-0 bg-white dark:bg-zinc-900">
+                  <button
+                    type="button"
+                    onClick={() => setScriptDetailTab('info')}
+                    className={`px-4 py-2.5 text-xs font-semibold border-b-2 transition-colors ${
+                      scriptDetailTab === 'info'
+                        ? 'border-zinc-900 text-zinc-900 dark:border-zinc-100 dark:text-zinc-100'
+                        : 'border-transparent text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200'
+                    }`}
+                  >
+                    脚本信息
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setScriptDetailTab('code')}
+                    className={`px-4 py-2.5 text-xs font-semibold border-b-2 transition-colors ${
+                      scriptDetailTab === 'code'
+                        ? 'border-zinc-900 text-zinc-900 dark:border-zinc-100 dark:text-zinc-100'
+                        : 'border-transparent text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200'
+                    }`}
+                  >
+                    脚本内容
+                  </button>
+                </div>
+
+                {scriptDetailTab === 'info' ? (
+                  <div className="p-6 overflow-y-auto space-y-4 flex-1">
+                    <div>
+                      <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 block mb-1">脚本名称 <span className="text-rose-500">*</span></label>
+                      <input
+                        type="text"
+                        value={editingPlugin.name}
+                        onChange={(e) => setEditingPlugin({ ...editingPlugin, name: e.target.value })}
+                        className="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 block mb-1">作者栏</label>
+                      <input
+                        type="text"
+                        value={editingPlugin.author || editingPlugin.contact || ''}
+                        onChange={(e) => setEditingPlugin({ ...editingPlugin, author: e.target.value, contact: e.target.value })}
+                        placeholder="填写作者名称或联系信息"
+                        className="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 block mb-1">分类</label>
+                      <select
+                        value={editingPlugin.category || '默认'}
+                        onChange={(e) => setEditingPlugin({ ...editingPlugin, category: e.target.value })}
+                        className="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                      >
+                        {Array.from(new Set(['默认', ...(appData.pluginCategories || []), ...pluginsList.map((p) => p.category || '默认')])).map((cat) => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 block mb-1">来源 <span className="text-zinc-400 font-normal">(DC链接/QQ群等)</span></label>
+                      <input
+                        type="text"
+                        value={editingPlugin.source || ''}
+                        onChange={(e) => setEditingPlugin({ ...editingPlugin, source: e.target.value })}
+                        placeholder="例如: Discord链接 / QQ群"
+                        className="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 block mb-1">描述</label>
+                      <textarea
+                        rows={4}
+                        value={editingPlugin.description || ''}
+                        onChange={(e) => setEditingPlugin({ ...editingPlugin, description: e.target.value })}
+                        placeholder="填写脚本的详细说明..."
+                        className="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none resize-none leading-relaxed"
+                      />
+                    </div>
+
+                    {/* 只有脚本拥有此按钮；插件不会出现 */}
+                    <div className="pt-3 border-t border-zinc-200 dark:border-zinc-800">
+                      <button
+                        type="button"
+                        onClick={() => handleExportPluginScriptJson(editingPlugin)}
+                        className="px-3.5 py-2 text-xs font-medium rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-1.5"
+                      >
+                        <Download className="w-3.5 h-3.5" /> 导出 JSON
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex-1 min-h-0 p-4 flex flex-col gap-3 overflow-hidden">
+                    <div className="flex items-center justify-between gap-3 flex-shrink-0">
+                      <h3 className="text-xs font-bold text-zinc-800 dark:text-zinc-200 flex items-center gap-1.5">
+                        <FileCode className="w-4 h-4 text-zinc-500" /> 脚本内容
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => setIsScriptCodeExpanded(true)}
+                        className="px-3 py-1.5 text-xs font-medium rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-1.5 whitespace-nowrap"
+                      >
+                        <Maximize2 className="w-3.5 h-3.5" /> 放大展开
+                      </button>
+                    </div>
+
+                    <div className="relative w-full flex-shrink-0">
+                      <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+                      <input
+                        type="text"
+                        value={scriptSearchQuery}
+                        onChange={(e) => setScriptSearchQuery(e.target.value)}
+                        placeholder="搜索/定位脚本内容..."
+                        className="w-full pl-9 pr-4 py-1.5 text-xs bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 rounded-lg focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-500"
+                      />
+                    </div>
+
+                    <div className="flex-1 min-h-0 relative rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-zinc-950">
+                      <textarea
+                        value={scriptContentDraft}
+                        onChange={(e) => setScriptContentDraft(e.target.value)}
+                        spellCheck={false}
+                        className="w-full h-full p-4 font-mono text-xs bg-zinc-950 text-zinc-100 focus:outline-none resize-none leading-relaxed"
+                        placeholder="暂无脚本 JSON 内容"
+                      />
+                    </div>
+
+                    {scriptSearchQuery.trim() && (
+                      <div className="text-[11px] text-zinc-500 dark:text-zinc-400 flex-shrink-0">
+                        内容中匹配关键词“{scriptSearchQuery}”的频次：{(
+                          (scriptContentDraft.match(new RegExp(scriptSearchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi')) || []).length
+                        )} 处
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="p-6 overflow-y-auto space-y-4 flex-1">
+                {/* 名称 */}
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 block mb-1">
+                    插件名称 <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={editingPlugin.name}
+                    onChange={(e) => setEditingPlugin({ ...editingPlugin, name: e.target.value })}
+                    className="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                  />
+                </div>
+
+                {/* 插件地址 */}
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 block mb-1">插件地址 <span className="text-rose-500">*</span></label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={editingPlugin.url || ''}
+                      onChange={(e) => setEditingPlugin({ ...editingPlugin, url: e.target.value })}
+                      placeholder="https://..."
+                      className="w-full px-3 py-2 text-xs font-mono bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none flex-1"
+                    />
+                    <button
+                      onClick={() => {
+                        if (editingPlugin.url) {
+                          navigator.clipboard.writeText(editingPlugin.url);
+                          showToast('插件地址已复制到剪贴板！', 'success');
+                        }
+                      }}
+                      className="px-3 py-2 text-xs font-medium rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 flex items-center gap-1 flex-shrink-0"
+                    >
+                      <Copy className="w-3.5 h-3.5" /> 复制
+                    </button>
+                  </div>
+                </div>
+
+                {/* 作者栏 */}
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 block mb-1">作者栏</label>
+                  <input
+                    type="text"
+                    value={editingPlugin.author || editingPlugin.contact || ''}
+                    onChange={(e) => setEditingPlugin({ ...editingPlugin, author: e.target.value, contact: e.target.value })}
+                    placeholder="填写作者名称或联系信息"
+                    className="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                  />
+                </div>
+
+                {/* 分类 */}
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 block mb-1">分类</label>
+                  <select
+                    value={editingPlugin.category || '默认'}
+                    onChange={(e) => setEditingPlugin({ ...editingPlugin, category: e.target.value })}
+                    className="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                  >
+                    {Array.from(new Set(['默认', ...(appData.pluginCategories || []), ...pluginsList.map((p) => p.category || '默认')])).map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 来源 */}
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 block mb-1">来源 <span className="text-zinc-400 font-normal">(DC链接/QQ群等)</span></label>
+                  <input
+                    type="text"
+                    value={editingPlugin.source || editingPlugin.contact || ''}
+                    onChange={(e) => setEditingPlugin({ ...editingPlugin, source: e.target.value })}
+                    placeholder="例如: Discord链接 / QQ群"
+                    className="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                  />
+                </div>
+
+                {/* 描述 */}
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 block mb-1">描述</label>
+                  <textarea
+                    rows={4}
+                    value={editingPlugin.description || ''}
+                    onChange={(e) => setEditingPlugin({ ...editingPlugin, description: e.target.value })}
+                    placeholder="填写插件功能或用途说明..."
+                    className="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none resize-none leading-relaxed"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Bottom Buttons: 插件保持原样；脚本独立保存 */}
+            <div className="px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-2 flex-shrink-0 bg-zinc-50/50 dark:bg-zinc-900/50">
+              <button
+                onClick={() => {
+                  if (!confirm(`确定要删除“${editingPlugin.name}”吗？`)) return;
+                  const updated = pluginsList.filter((p) => p.id !== editingPlugin.id);
+                  updateAppData({ ...appData, plugins: updated });
+                  setEditingPlugin(null);
+                  showToast('项目已成功删除', 'info');
+                }}
+                className="px-3.5 py-2 text-xs font-bold rounded-lg bg-rose-600 text-white hover:bg-rose-700 flex items-center gap-1"
+              >
+                <Trash2 className="w-3.5 h-3.5" /> 删除
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setEditingPlugin(null)}
+                  className="px-3 py-2 text-xs font-medium rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                >
+                  取消
+                </button>
+
+                <button
+                  onClick={() => {
+                    if (!editingPlugin.name.trim()) {
+                      showToast('请输入名称', 'error');
+                      return;
+                    }
+                    if (editingPlugin.type === 'plugin' && !editingPlugin.url?.trim()) {
+                      showToast('请输入插件地址', 'error');
+                      return;
+                    }
+                    if (editingPlugin.type === 'script') {
+                      try {
+                        JSON.parse(scriptContentDraft);
+                      } catch {
+                        showToast('脚本内容不是有效的 JSON，请检查后再保存', 'error');
+                        return;
+                      }
+                    }
+                    const finalPlugin = editingPlugin.type === 'script'
+                      ? { ...editingPlugin, jsonData: (() => { try { return JSON.parse(scriptContentDraft); } catch { return editingPlugin.jsonData; } })(), updatedAt: Date.now() }
+                      : editingPlugin;
+                    const updated = pluginsList.map((p) => (p.id === finalPlugin.id ? finalPlugin : p));
+                    updateAppData({ ...appData, plugins: updated });
+                    setEditingPlugin(null);
+                    showToast('信息已保存更新！', 'success');
+                  }}
+                  className="px-4 py-2 text-xs font-bold rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200"
+                >
+                  确认
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== ST PLUGINS: SCRIPT CONTENT FULLSCREEN ==================== */}
+      {isScriptCodeExpanded && editingPlugin?.type === 'script' && (
+        <div className="fixed inset-0 z-[60] bg-white text-zinc-900 flex flex-col animate-in fade-in pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)]">
+          <div className="px-4 sm:px-6 py-3 border-b border-zinc-200 bg-white flex items-center justify-between flex-shrink-0 min-h-[3.5rem]">
+            <div className="flex items-center gap-2 min-w-0">
+              <h3 className="font-bold text-sm text-zinc-900 truncate">{editingPlugin.name} - 脚本内容</h3>
+              <span className="px-2 py-0.5 text-[10px] font-mono bg-zinc-100 text-zinc-600 rounded uppercase border border-zinc-200 flex-shrink-0">JSON</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsScriptCodeExpanded(false)}
+              className="p-2 rounded-lg hover:bg-zinc-100 text-zinc-500 hover:text-zinc-900 flex-shrink-0"
+              aria-label="关闭全屏脚本内容"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div className="px-4 sm:px-6 py-3 border-b border-zinc-200 bg-white flex-shrink-0">
+            <div className="relative w-full">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+              <input
+                type="text"
+                value={scriptSearchQuery}
+                onChange={(e) => setScriptSearchQuery(e.target.value)}
+                placeholder="搜索/定位脚本内容..."
+                className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-zinc-300 rounded-xl text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+              />
+            </div>
+            <div className="flex items-center justify-end gap-2 mt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(scriptContentDraft);
+                  showToast('脚本内容已复制到剪贴板', 'success');
+                }}
+                className="px-3 py-1.5 text-xs font-medium rounded-lg border border-zinc-300 text-zinc-700 hover:bg-zinc-100"
+              >
+                复制全文
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveScriptContent}
+                className="px-4 py-1.5 text-xs font-bold rounded-lg bg-zinc-900 text-white hover:bg-zinc-800"
+              >
+                保存修改
+              </button>
+              <button
+                type="button"
+                onClick={() => handleExportPluginScriptJson(editingPlugin)}
+                className="px-3 py-1.5 text-xs font-medium rounded-lg border border-zinc-300 text-zinc-700 hover:bg-zinc-100"
+              >
+                导出 JSON
+              </button>
+            </div>
+          </div>
+
+          <div className="flex-1 min-h-0 p-3 sm:p-5 bg-white overflow-hidden pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]">
+            <textarea
+              value={scriptContentDraft}
+              onChange={(e) => setScriptContentDraft(e.target.value)}
+              spellCheck={false}
+              placeholder="暂无脚本 JSON 内容"
+              className="w-full h-full p-4 font-mono text-xs sm:text-sm text-zinc-900 bg-white border border-zinc-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-zinc-300 leading-relaxed resize-none"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ==================== ST PLUGINS: NEW GROUP MODAL ==================== */}
+      {showNewPluginGroupModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-in fade-in pt-[calc(1rem+env(safe-area-inset-top,0px))]">
+          <div className="w-full max-w-sm bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">新建插件分组</h3>
+              <button

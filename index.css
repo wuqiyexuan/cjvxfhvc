@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* 防止 iOS 弹出键盘时输入框自动放大以及双击/手势缩放 */
+input, select, textarea {
+  font-size: 16px !important;
+}
+
+html, body {
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* iOS Safe Area Padding for Standalone PWA / Web App Added to Home Screen */
+:root {
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+}
+
+/* 顶部状态栏与刘海/灵动岛避让 */
+header {
+  padding-top: env(safe-area-inset-top, 0px);
+  height: calc(var(--app-header-height, 56px) + env(safe-area-inset-top, 0px)) !important;
+}
+
+aside {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Toast 提示避让状态栏 */
+.toast-container {
+  top: calc(1rem + env(safe-area-inset-top, 0px)) !important;
+}
+
+
+
+/* User 人设 / 生图：输入栏和按钮统一使用灰色边框，不使用黑色描边 */
+.persona-image-page input,
+.persona-image-page textarea,
+.persona-image-page select,
+.persona-image-page button {
+  border-color: rgb(161 161 170) !important;
+}
+.dark .persona-image-page input,
+.dark .persona-image-page textarea,
+.dark .persona-image-page select,
+.dark .persona-image-page button {
+  border-color: rgb(113 113 122) !important;
+}
+
+/* User 人设 / 生图：控件统一为 #E4E4E7，按钮功能色（如确定/删除）保持原样 */
+.persona-image-page input,
+.persona-image-page textarea,
+.persona-image-page select,
+.persona-image-page button,
+.persona-image-modal input,
+.persona-image-modal textarea,
+.persona-image-modal select,
+.persona-image-modal button {
+  border-color: #E4E4E7 !important;
+}
+
+.persona-image-modal-body {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.persona-image-modal-footer {
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.04);
+}
+/* User 人设 / 生图控件统一边框色 */
+.persona-image-page input,
+.persona-image-page textarea,
+.persona-image-page select,
+.persona-image-page button,
+.persona-image-modal input,
+.persona-image-modal textarea,
+.persona-image-modal select,
+.persona-image-modal button {
+  border-color: #E4E4E7 !important;
+}
+
+.persona-image-modal-body {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.persona-image-modal-footer {
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.04);
+}
+
+
+
+/* v3：User 人设 / 生图统一控件尺寸与边框 */
+.persona-image-page input:not([type="checkbox"]):not([type="radio"]),
+.persona-image-page select,
+.persona-image-page button,
+.persona-image-modal input:not([type="checkbox"]):not([type="radio"]),
+.persona-image-modal select,
+.persona-image-modal button {
+  border-color: #E4E4E7 !important;
+}
+.persona-image-page input:not([type="checkbox"]):not([type="radio"]),
+.persona-image-page select,
+.persona-image-modal input:not([type="checkbox"]):not([type="radio"]),
+.persona-image-modal select {
+  min-height: 36px;
+}
+.persona-image-page .persona-sort-control {
+  border-color: #E4E4E7 !important;
+}
+.persona-image-modal-footer {
+  gap: 0.25rem !important;
+}
+
+/* v4：User 人设 / 生图详情页底部操作区进一步收紧，保持固定底栏与 iOS 安全区 */
+.persona-image-modal-footer {
+  gap: 0.2rem !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px)) !important;
+}
+.persona-image-modal-footer button {
+  margin: 0 !important;
+}
